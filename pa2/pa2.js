@@ -34,7 +34,7 @@ var lightPositions = [             // values for light position, selected by pop
     [0,0,-10,1],
     [2,3,5,0],
     [0,-1,0,0],//my add 1
-    [-5,0,0,0] //my add 2
+    [-1,0,0,0] //my add 2
 ];
 
 var objects = [                     // Objects for display, selected by popup menu
@@ -48,7 +48,7 @@ var currentModelNumber;             // contains data for the current object
 
 function draw() {
 
-    gl.clearColor(0.15,0.15,0.3,1);
+    gl.clearColor(.15,0.15,0.3,1);
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
    
     mat4.perspective(projection,Math.PI/5,1,10,20);
