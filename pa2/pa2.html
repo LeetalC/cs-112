@@ -22,9 +22,6 @@
     uniform mat4 projection;
     uniform mat3 normalMatrix;
 
-    uniform int ambient;    //used to set the mode
-    uniform int diffuse;
-    uniform int specular;
 
     uniform vec4 lightPosition;
     uniform vec4 diffuseColor;
@@ -32,21 +29,18 @@
 
     uniform float specularExponent;
 
-    float K_a = 0.1;    //constants
-    float K_d = 0.8;
-    float K_s = 0.4;
-
     varying vec4 v_color;   //this is sent to frag shader
     varying vec3 color; //basic diffuse color ir, ig, ib
+    varying vec3 N,L,R, V;   // vectors for lighting equation
 
     void main() {
-        vec3 N, L, R, V;  // vectors for lighting equation
+
         vec4 coords = vec4(a_coords,1.0);
         vec4 eyeCoords = modelview* coords;
         gl_Position = projection * eyeCoords;
         
         N = normalize( normalMatrix*a_normal ); 
-         if ( lightPosition.w == 0.0 ) {
+        if ( lightPosition.w == 0.0 ) {
             L = normalize( lightPosition.xyz );
         }
         else {
@@ -56,19 +50,7 @@
         R = -reflect(L,N);
         V = normalize( -eyeCoords.xyz);
        
-
-        if(ambient == 1){
-            color += K_a * diffuseColor.rgb;
-        }
-
-        if(diffuse == 1){
-            color += K_d * diffuseColor.rgb * max(dot(N,L), 0.0);
-        }
-
-         if(specular == 1){
-            color += K_s * specularColor * pow(max(dot(R,V), 0.0), specularExponent) * diffuseColor.a;
-        }
-        v_color = vec4(color, diffuseColor.a);
+        v_color = vec4(color, diffuseColor.a);  //v_color is sent to frag shader
 
        
     }
@@ -82,10 +64,36 @@
        precision mediump float;
     #endif
 
+    uniform int ambient;    //used to set the mode
+    uniform int diffuse;
+    uniform int specular;
+
+    varying vec3 N,L,R,V;
+    varying vec3 color;
     varying vec4 v_color;
 
+    uniform vec4 diffuseColor;
+    uniform vec3 specularColor;
+    uniform float specularExponent;
+
+    float K_a = 0.1;    //constants
+    float K_d = 0.8;
+    float K_s = 0.4;
+
     void main() {
-        gl_FragColor = v_color;
+    
+    gl_FragColor = v_color;
+        if(ambient == 1){
+            gl_FragColor += vec4(K_a * diffuseColor.rgb, diffuseColor.a);
+        }
+
+        if(diffuse == 1){
+            gl_FragColor += vec4(K_d * diffuseColor.rgb * max(dot(N,L), 0.0), diffuseColor.a);
+        }
+
+        if(specular == 1){
+            gl_FragColor += vec4(K_s * specularColor * pow(max(dot(R,V), 0.0), specularExponent) * diffuseColor.a, diffuseColor.a);
+        }
 
     }
 
