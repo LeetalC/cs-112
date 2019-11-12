@@ -135,7 +135,7 @@ function initGL() {
     gl.uniform1i(u_diffuse, 0);
     gl.uniform1i(u_specular, 0 );
 
-    gl.uniform3f(u_specularColor, 0.5, 0.5, 0.5);   //defaults of the lighting components?
+    gl.uniform3f(u_specularColor, .5, .5, .5);   //defaults of the lighting components?
     gl.uniform4f(u_diffuseColor, 0, 1, 1, 1);      
     gl.uniform1f(u_specularExponent, 10);  
     gl.uniform4f(u_lightPosition, 0, 0, 0, 1);
@@ -221,9 +221,9 @@ function init() {
         return;
     }
 
-    document.getElementById("ambient").checked = false;
-    document.getElementById("diffuse").checked = false;
-    document.getElementById("specular").checked = false;
+    document.getElementById("ambient").checked = true;
+    document.getElementById("diffuse").checked = true;
+    document.getElementById("specular").checked = true;
 
     document.getElementById("object").value = "0";
     document.getElementById("lightpos").value = "0";
