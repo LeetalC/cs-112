@@ -46,6 +46,8 @@ var then =0;
 var modelXRotationRadians = degToRad(0);
 var modelYRotationRadians = degToRad(0);
 
+var imgs = ["pos-x.png", "neg-x.png", "pos-y.png", "neg-y.png", "pos-z.png", "neg-z.png"];
+
 // ready variable
 ready_to_draw = false;
 
@@ -336,19 +338,70 @@ function animate() {
 //		modelYRotationRadians += 0.01;
     }
 }
+function handleTextureLoaded(texture, target, url) {
+	console.log("were in here");
+  	var image = new Image();
+
+  	image.onload = function() {
+            gl.bindTexture(gl.TEXTURE_CUBE_MAP, texture);
+            gl.texImage2D(target, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image);
+            gl.bindTexture(gl.TEXTURE_CUBE_MAP, null);
+    }
+    image.src = url;
+
+
+  // Check if the image is a power of 2 in both dimensions.
+  if (isPowerOf2(image.width) && isPowerOf2(image.height)) {
+     // Yes, it's a power of 2. Generate mips.
+     gl.generateMipmap(gl.TEXTURE_CUBE_MAP);
+     gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_NEAREST);
+     console.log("Loaded power of 2 texture");
+  } else {
+     // No, it's not a power of 2. Turn of mips and set wrapping to clamp to edge
+     gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+     gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+     gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+     console.log("Loaded non-power of 2 texture");
+  }
+  gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+
+
+}
 
 /**
 * Function to setup the cubemap texture for the skybox and teapot.
 * @return None
 */
+
 function setupCubeMap() {
+	cubeTexture = gl.createTexture();
+	gl.bindTexture(gl.TEXTURE_CUBE_MAP, cubeTexture);
+	gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+    gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+
+	for(var i = 0; i < 6; i++){
+    	handleTextureLoaded(cubeTexture, gl.TEXTURE_CUBE_MAP_POSITIVE_X + i, imgs[i]);
+    }
+
+
+	//}
+   // handleTextureLoaded(cubeImage, cubeTexture);
+
     // TODO: Initialize the Cube Map, and set its parameters
     // See usage of gl.createTexture
 	
 	// TODO: Set texture parameters
 	// See uage of gl.texParameteri
+	//cubeTexture = gl.createTexture();
+	//gl.bindTexture(gl.TEXTURE_2D, cubeTexture);
+ 	//gl.bindTexture(gl.TEXTURE_CUBE_MAP, cubeTexture);
+	//gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE, new Uint8Array([0, 0, 255, 255]));
+   // cubeImage = new Image();
+ //   cubeImage.onload = function() { handleTextureLoaded(cubeImage, cubeTexture); }
+   // cubeImage.src = "mickey.jpg";
 
-    
+
+
  	// TODO: Bind the images to each side of the cubemap
  	// Images are in folder "skybox"
  	// See usage of gl.bindTexture, gl.texImage2D

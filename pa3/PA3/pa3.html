@@ -92,11 +92,15 @@
 	uniform float uIsSkybox;
 
 	void main() {
+		//gl_FragColor = texture2D(uSampler, vTexCoord);
+		 //gl_FragColor = texture2D(uSampler, vTextureCoord) * textureCube(uCubeSampler, vVertexNormal);
+		gl_FragColor = vColor;
+
 		// TODO: texture map the skybox and environment map the teapot
 		// For texturing mapping the skybox, gl_FragColor = vColor + color_in_texture
 		// For environment mapping the teapot, gl_FragColor = vColor + color_in_environment_map
 
-		gl_FragColor = vColor;
+	//	gl_FragColor = vColor;
 	}
 </script>
 
@@ -109,8 +113,8 @@
 <script src="user_commands.js"></script>
 <script src="webgl-utils.js"></script> 
 
-Name: <br/>
-Student ID: <br/>
+Name: Leetal Cohen<br/>
+Student ID: 7882844<br/>
 <body onload="startup();">
 <canvas id="myGLCanvas" width="800" height="800"></canvas>
 	<form id="input_form">
