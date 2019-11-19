@@ -48,6 +48,7 @@ var modelYRotationRadians = degToRad(0);
 
 var imgs = ["pos-x.png", "neg-x.png", "pos-y.png", "neg-y.png", "pos-z.png", "neg-z.png"];
 
+
 // ready variable
 ready_to_draw = false;
 
@@ -243,6 +244,8 @@ function setupShaders() {
 
 	gl.useProgram(shaderProgram);
 
+
+
 	// Enable vertex position
 	shaderProgram.vertexPositionAttribute = gl.getAttribLocation(shaderProgram, "aVertexPosition");
 	console.log("Vertex attrib: ", shaderProgram.vertexPositionAttribute);
@@ -262,6 +265,7 @@ function setupShaders() {
 	shaderProgram.uniformAmbientLightColorLoc = gl.getUniformLocation(shaderProgram, "uAmbientLightColor");  
 	shaderProgram.uniformDiffuseLightColorLoc = gl.getUniformLocation(shaderProgram, "uDiffuseLightColor");
 	shaderProgram.uniformSpecularLightColorLoc = gl.getUniformLocation(shaderProgram, "uSpecularLightColor");
+
 }
 
 /**
@@ -338,18 +342,11 @@ function animate() {
 //		modelYRotationRadians += 0.01;
     }
 }
-function handleTextureLoaded(texture, target, url) {
-	console.log("were in here");
-  	var image = new Image();
+function handleTextureLoaded(image, texture, target) {
+  console.log("handleTextureLoaded, image = " + image);
 
-  	image.onload = function() {
-            gl.bindTexture(gl.TEXTURE_CUBE_MAP, texture);
-            gl.texImage2D(target, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image);
-            gl.bindTexture(gl.TEXTURE_CUBE_MAP, null);
-    }
-    image.src = url;
-
-
+  gl.bindTexture(gl.TEXTURE_CUBE_MAP, texture);
+  gl.texImage2D(target, 0, gl.RGBA, gl.RGBA,gl.UNSIGNED_BYTE, image);
   // Check if the image is a power of 2 in both dimensions.
   if (isPowerOf2(image.width) && isPowerOf2(image.height)) {
      // Yes, it's a power of 2. Generate mips.
@@ -364,8 +361,6 @@ function handleTextureLoaded(texture, target, url) {
      console.log("Loaded non-power of 2 texture");
   }
   gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
-
-
 }
 
 /**
@@ -374,14 +369,65 @@ function handleTextureLoaded(texture, target, url) {
 */
 
 function setupCubeMap() {
+	var i = 0;
 	cubeTexture = gl.createTexture();
 	gl.bindTexture(gl.TEXTURE_CUBE_MAP, cubeTexture);
-	gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
-    gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
 
-	for(var i = 0; i < 6; i++){
-    	handleTextureLoaded(cubeTexture, gl.TEXTURE_CUBE_MAP_POSITIVE_X + i, imgs[i]);
-    }
+	
+	gl.texImage2D(gl.TEXTURE_CUBE_MAP_POSITIVE_X, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
+	cubeImage = new Image();
+	cubeImage.src = "pos-x.png";
+	cubeImage.onload = function() {
+		handleTextureLoaded(cubeImage, cubeTexture, gl.TEXTURE_CUBE_MAP_POSITIVE_X);
+	}
+	i++;
+
+	gl.texImage2D(gl.TEXTURE_CUBE_MAP_NEGATIVE_X, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
+	cubeImage = new Image();
+	cubeImage.src = "neg-x.png";
+	cubeImage.onload = function() {
+		handleTextureLoaded(cubeImage, cubeTexture, gl.TEXTURE_CUBE_MAP_NEGATIVE_X);
+	}
+	i++;
+
+	gl.texImage2D(gl.TEXTURE_CUBE_MAP_POSITIVE_Y, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
+	cubeImage = new Image();
+	cubeImage.src = "pos-y.png";
+	cubeImage.onload = function() {
+		handleTextureLoaded(cubeImage, cubeTexture, gl.TEXTURE_CUBE_MAP_POSITIVE_Y);
+	}
+	i++;
+
+	gl.texImage2D(gl.TEXTURE_CUBE_MAP_NEGATIVE_Y, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
+	cubeImage = new Image();
+	cubeImage.src = "neg-y.png";
+	cubeImage.onload = function() {
+		handleTextureLoaded(cubeImage, cubeTexture, gl.TEXTURE_CUBE_MAP_NEGATIVE_Y);
+	}
+	i++;
+
+	gl.texImage2D(gl.TEXTURE_CUBE_MAP_POSITIVE_Z, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
+	cubeImage = new Image();
+	cubeImage.src = "pos-z.png";
+	cubeImage.onload = function() {
+		handleTextureLoaded(cubeImage, cubeTexture, gl.TEXTURE_CUBE_MAP_POSITIVE_Z);
+	}
+	i++;
+
+	gl.texImage2D(gl.TEXTURE_CUBE_MAP_NEGATIVE_X, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
+	cubeImage = new Image();
+	cubeImage.src = "neg-z.png";
+	cubeImage.onload = function() {
+		handleTextureLoaded(cubeImage, cubeTexture, gl.TEXTURE_CUBE_MAP_NEGATIVE_Z);
+	}
+	i++;
+
+
+//gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+
+	//for(var i = 0; i < 6; i++){
+   // 	handleTextureLoaded(cubeTexture, gl.TEXTURE_CUBE_MAP_POSITIVE_X + i, imgs[i]);
+   // }
 
 
 	//}

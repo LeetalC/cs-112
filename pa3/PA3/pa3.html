@@ -92,15 +92,13 @@
 	uniform float uIsSkybox;
 
 	void main() {
-		//gl_FragColor = texture2D(uSampler, vTexCoord);
-		 //gl_FragColor = texture2D(uSampler, vTextureCoord) * textureCube(uCubeSampler, vVertexNormal);
-		gl_FragColor = vColor;
+	gl_FragColor = textureCube(uSampler, viewDir);
 
 		// TODO: texture map the skybox and environment map the teapot
 		// For texturing mapping the skybox, gl_FragColor = vColor + color_in_texture
 		// For environment mapping the teapot, gl_FragColor = vColor + color_in_environment_map
 
-	//	gl_FragColor = vColor;
+		gl_FragColor = vColor;
 	}
 </script>
 

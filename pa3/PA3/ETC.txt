@@ -1,0 +1,11 @@
+	for(var i = 0; i < 6; i++) {
+		gl.texImage2D(gl.TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
+		cubeImage = new Image();
+				cubeImage.src = imgs[i];
+
+		cubeImage.onload = function() {
+			handleTextureLoaded(cubeImage, cubeTexture, gl.TEXTURE_CUBE_MAP_POSITIVE_X + i);
+		}
+
+
+	}
