@@ -31,6 +31,7 @@ function configure() {
         gl.uniform1i(Program.uUseLambert, true); //Init textures 
         texture = new Texture();
         texture.setImage('textures/webgl.png'); //Init Cube map function 
+
         loadCubemapFace(gl, target, texture, url) {
                 var image = new Image();
                 image.onload = function() {
@@ -40,6 +41,7 @@ function configure() {
                 }
                 image.src = url;
         };
+        
         cubeTexture = gl.createTexture();
         gl.bindTexture(gl.TEXTURE_CUBE_MAP, cubeTexture);
         gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_MAG_FILTER, gl.LINEAR);

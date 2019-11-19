@@ -369,59 +369,50 @@ function handleTextureLoaded(image, texture, target) {
 */
 
 function setupCubeMap() {
-	var i = 0;
 	cubeTexture = gl.createTexture();
 	gl.bindTexture(gl.TEXTURE_CUBE_MAP, cubeTexture);
-
+	gl.texImage2D(gl.TEXTURE_CUBE_MAP_POSITIVE_X, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE, new Uint8Array([0, 0, 255, 255]));
 	
-	gl.texImage2D(gl.TEXTURE_CUBE_MAP_POSITIVE_X, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
 	cubeImage = new Image();
 	cubeImage.src = "pos-x.png";
 	cubeImage.onload = function() {
 		handleTextureLoaded(cubeImage, cubeTexture, gl.TEXTURE_CUBE_MAP_POSITIVE_X);
 	}
-	i++;
 
-	gl.texImage2D(gl.TEXTURE_CUBE_MAP_NEGATIVE_X, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
+	gl.texImage2D(gl.TEXTURE_CUBE_MAP_NEGATIVE_X, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE, new Uint8Array([0, 0, 255, 255]));
 	cubeImage = new Image();
 	cubeImage.src = "neg-x.png";
 	cubeImage.onload = function() {
 		handleTextureLoaded(cubeImage, cubeTexture, gl.TEXTURE_CUBE_MAP_NEGATIVE_X);
 	}
-	i++;
 
-	gl.texImage2D(gl.TEXTURE_CUBE_MAP_POSITIVE_Y, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
+	gl.texImage2D(gl.TEXTURE_CUBE_MAP_POSITIVE_Y, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE, new Uint8Array([0, 0, 255, 255]));
 	cubeImage = new Image();
 	cubeImage.src = "pos-y.png";
 	cubeImage.onload = function() {
 		handleTextureLoaded(cubeImage, cubeTexture, gl.TEXTURE_CUBE_MAP_POSITIVE_Y);
 	}
-	i++;
 
-	gl.texImage2D(gl.TEXTURE_CUBE_MAP_NEGATIVE_Y, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
+	gl.texImage2D(gl.TEXTURE_CUBE_MAP_NEGATIVE_Y, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE, new Uint8Array([0, 0, 255, 255]));
 	cubeImage = new Image();
 	cubeImage.src = "neg-y.png";
 	cubeImage.onload = function() {
 		handleTextureLoaded(cubeImage, cubeTexture, gl.TEXTURE_CUBE_MAP_NEGATIVE_Y);
 	}
-	i++;
 
-	gl.texImage2D(gl.TEXTURE_CUBE_MAP_POSITIVE_Z, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
+	gl.texImage2D(gl.TEXTURE_CUBE_MAP_POSITIVE_Z, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE, new Uint8Array([0, 0, 255, 255]));
 	cubeImage = new Image();
 	cubeImage.src = "pos-z.png";
 	cubeImage.onload = function() {
 		handleTextureLoaded(cubeImage, cubeTexture, gl.TEXTURE_CUBE_MAP_POSITIVE_Z);
 	}
-	i++;
 
-	gl.texImage2D(gl.TEXTURE_CUBE_MAP_NEGATIVE_X, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
+	gl.texImage2D(gl.TEXTURE_CUBE_MAP_NEGATIVE_X, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE, new Uint8Array([0, 0, 255, 255]));
 	cubeImage = new Image();
 	cubeImage.src = "neg-z.png";
 	cubeImage.onload = function() {
 		handleTextureLoaded(cubeImage, cubeTexture, gl.TEXTURE_CUBE_MAP_NEGATIVE_Z);
 	}
-	i++;
-
 
 //gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
 
