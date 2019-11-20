@@ -47,8 +47,7 @@ var modelXRotationRadians = degToRad(0);
 var modelYRotationRadians = degToRad(0);
 
 var imgs = ["pos-x.png", "neg-x.png", "pos-y.png", "neg-y.png", "pos-z.png", "neg-z.png"];
-
-
+var imgs1 = ["pos-x.jpg", "neg-x.jpg", "pos-y.jpg", "neg-y.jpg", "pos-z.jpg", "neg-z.jpg"];
 // ready variable
 ready_to_draw = false;
 
@@ -342,77 +341,43 @@ function animate() {
 //		modelYRotationRadians += 0.01;
     }
 }
-function handleTextureLoaded(image, texture, target) {
-  console.log("handleTextureLoaded, image = " + image);
 
-  gl.bindTexture(gl.TEXTURE_CUBE_MAP, texture);
-  gl.texImage2D(target, 0, gl.RGBA, gl.RGBA,gl.UNSIGNED_BYTE, image);
-  // Check if the image is a power of 2 in both dimensions.
-  if (isPowerOf2(image.width) && isPowerOf2(image.height)) {
-     // Yes, it's a power of 2. Generate mips.
-     gl.generateMipmap(gl.TEXTURE_CUBE_MAP);
-     gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_NEAREST);
-     console.log("Loaded power of 2 texture");
-  } else {
-     // No, it's not a power of 2. Turn of mips and set wrapping to clamp to edge
-     gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
-     gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-     gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
-     console.log("Loaded non-power of 2 texture");
-  }
-  gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
-}
 
 /**
 * Function to setup the cubemap texture for the skybox and teapot.
 * @return None
 */
 
+
+
+function handleImages(target, imageurl){
+	const cimage = new Image();
+	cimage.src = imageurl;
+
+	cimage.onload = function() {
+		gl.texImage2D(target, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, cimage);
+		gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+		gl.generateMipmap(gl.TEXTURE_CUBE_MAP);
+	}
+
+
+}
+
 function setupCubeMap() {
 	cubeTexture = gl.createTexture();
 	gl.bindTexture(gl.TEXTURE_CUBE_MAP, cubeTexture);
-	gl.texImage2D(gl.TEXTURE_CUBE_MAP_POSITIVE_X, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE, new Uint8Array([0, 0, 255, 255]));
+
+	handleImages(gl.TEXTURE_CUBE_MAP_POSITIVE_X, imgs1[0]);
+	handleImages(gl.TEXTURE_CUBE_MAP_NEGATIVE_X, imgs1[1]);
+	handleImages(gl.TEXTURE_CUBE_MAP_POSITIVE_Y, imgs1[2]);
+	handleImages(gl.TEXTURE_CUBE_MAP_NEGATIVE_Y, imgs1[3]);
+	handleImages(gl.TEXTURE_CUBE_MAP_POSITIVE_Z, imgs1[4]);
+	handleImages(gl.TEXTURE_CUBE_MAP_NEGATIVE_Z, imgs1[5]);
+
+
+
+
 	
-	cubeImage = new Image();
-	cubeImage.src = "pos-x.png";
-	cubeImage.onload = function() {
-		handleTextureLoaded(cubeImage, cubeTexture, gl.TEXTURE_CUBE_MAP_POSITIVE_X);
-	}
-
-	gl.texImage2D(gl.TEXTURE_CUBE_MAP_NEGATIVE_X, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE, new Uint8Array([0, 0, 255, 255]));
-	cubeImage = new Image();
-	cubeImage.src = "neg-x.png";
-	cubeImage.onload = function() {
-		handleTextureLoaded(cubeImage, cubeTexture, gl.TEXTURE_CUBE_MAP_NEGATIVE_X);
-	}
-
-	gl.texImage2D(gl.TEXTURE_CUBE_MAP_POSITIVE_Y, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE, new Uint8Array([0, 0, 255, 255]));
-	cubeImage = new Image();
-	cubeImage.src = "pos-y.png";
-	cubeImage.onload = function() {
-		handleTextureLoaded(cubeImage, cubeTexture, gl.TEXTURE_CUBE_MAP_POSITIVE_Y);
-	}
-
-	gl.texImage2D(gl.TEXTURE_CUBE_MAP_NEGATIVE_Y, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE, new Uint8Array([0, 0, 255, 255]));
-	cubeImage = new Image();
-	cubeImage.src = "neg-y.png";
-	cubeImage.onload = function() {
-		handleTextureLoaded(cubeImage, cubeTexture, gl.TEXTURE_CUBE_MAP_NEGATIVE_Y);
-	}
-
-	gl.texImage2D(gl.TEXTURE_CUBE_MAP_POSITIVE_Z, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE, new Uint8Array([0, 0, 255, 255]));
-	cubeImage = new Image();
-	cubeImage.src = "pos-z.png";
-	cubeImage.onload = function() {
-		handleTextureLoaded(cubeImage, cubeTexture, gl.TEXTURE_CUBE_MAP_POSITIVE_Z);
-	}
-
-	gl.texImage2D(gl.TEXTURE_CUBE_MAP_NEGATIVE_X, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE, new Uint8Array([0, 0, 255, 255]));
-	cubeImage = new Image();
-	cubeImage.src = "neg-z.png";
-	cubeImage.onload = function() {
-		handleTextureLoaded(cubeImage, cubeTexture, gl.TEXTURE_CUBE_MAP_NEGATIVE_Z);
-	}
 
 //gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
 

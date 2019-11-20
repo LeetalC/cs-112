@@ -91,14 +91,22 @@
 	// Dictates how to set gl_FragColor
 	uniform float uIsSkybox;
 
+
 	void main() {
-	gl_FragColor = textureCube(uSampler, viewDir);
+
+		vec3 R = reflect(viewDir, vVertexNormal);
+		vec4 color;
+		if(uIsSkybox == 1.0){
+			color = vColor + textureCube(uSampler, vVertexNormal);
+		} else {
+			color = vColor + textureCube(uSampler, R);
+		}
+
+		gl_FragColor = color;
 
 		// TODO: texture map the skybox and environment map the teapot
 		// For texturing mapping the skybox, gl_FragColor = vColor + color_in_texture
 		// For environment mapping the teapot, gl_FragColor = vColor + color_in_environment_map
-
-		gl_FragColor = vColor;
 	}
 </script>
 
