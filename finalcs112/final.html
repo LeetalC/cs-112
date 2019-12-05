@@ -1,11 +1,12 @@
-<!DOCTYPE html>
-<meta charset="UTF-8">
-<html>
+<!DOCTYPE HTML> 
+<meta charset="utf-8"> 
+<html lang="en"> 
+
 <head>
-<title>Programming Assignment 1</title>
+<title>Final Project</title>
 <style>
     body {
-        background-color: #EEEEEE;
+        background-color: #58D68D;
     }
     label {
         white-space: pre;
@@ -64,18 +65,22 @@
 </script>
 
 
-<script src="gl-matrix-min.js"></script>
-<script type="text/javascript" src="webgl-utils.js"></script>
-<script src="trackball-rotator.js"></script>
-<script src="models.js"></script>
-<script src = "pa1.js"></script>
+<script src = "gl-matrix-min.js"></script>
+<script type = "text/javascript" src="webgl-utils.js"></script>
+<script src = "trackball-rotator.js"></script>
+<script src = "models.js"></script>
+<script src = "final.js"></script>
 </head>
 
-<body onload="init()">
-Name: Leetal Cohen <br/>
-Student ID: 78828044<br/>
-<label><input type="checkbox" id="my_gl"><b>Use_My_gl</b></label>
 
+<form id="input_form">
+<fieldset>
+    Name: Leetal Cohen<br/>
+    Student ID: 78828044<br/>
+</fieldset>
+</form>
+
+<body onload="init()">
 <div id="canvas-holder">
    <canvas width=800 height=800 id="myGLCanvas"></canvas>
 </div>
@@ -83,4 +88,3 @@ Student ID: 78828044<br/>
 </body>
 
 </html>
-

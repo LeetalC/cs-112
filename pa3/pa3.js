@@ -49,6 +49,7 @@ var modelYRotationRadians = degToRad(0);
 //testing with different maps
 var imgs = ["pos-x.png", "neg-x.png", "pos-y.png", "neg-y.png", "pos-z.png", "neg-z.png"];
 var imgs1 = ["pos-x.jpg", "neg-x.jpg", "pos-y.jpg", "neg-y.jpg", "pos-z.jpg", "neg-z.jpg"];
+
 // ready variable
 ready_to_draw = false;
 
@@ -352,7 +353,7 @@ function animate() {
 
 
 function handleImages(target, imageurl){
-	const cimage = new Image();
+	var cimage = new Image();	//cubeImage breaks the program, created my own variable.
 	cimage.src = imageurl;
 
 	cimage.onload = function() {

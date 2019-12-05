@@ -15,11 +15,20 @@ var u_lightPosition;
 var u_modelview;
 var u_projection;
 var u_normalMatrix;    
+var currentModelNumber;  // contains data for the current object
 
 var projection = mat4.create();          // projection matrix
 var modelview;                           // modelview matrix; value comes from rotator
 var normalMatrix = mat3.create();        // matrix, derived from model and view matrix, for transforming normal vectors
 var rotator;                             // A TrackballRotator to implement rotation by mouse.
+
+//animation
+var rotatedDegrees = 0;
+var inc = 1;
+var then = 0;
+var modelXRotationRadians = degToRad(0);
+var modelYRotationRadians = degToRad(0);
+
 //make scale matrix, transform matrix
 var lastTime = 0;
 var colors = [  // RGB color arrays for diffuse and specular color values
@@ -31,10 +40,15 @@ var lightPositions = [  // values for light position
 ];
 
 var objects = [         // Objects for display
-    chair(),table(), cube(), uvSphere(1),
+   cube(1),
+   ring(1,0),
+   uvSphere(1),
+   uvTorus(2,1),
+   uvCylinder(1,1),
+   uvCone(1,1),
 ];
 
-var currentModelNumber;  // contains data for the current object
+
 
 function degToRad(degrees) {
   return degrees * Math.PI / 180;
@@ -58,107 +72,122 @@ function perspective(proj, fov, aspect, n, f)
 //done
 function translate(modelview, vec)//TODO: function inputs
 {
-
     var transMat = [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, vec[0], vec[1], vec[2], 1];
 
-    if (document.getElementById("my_gl").checked)
-    {
-       mat4.multiply(modelview, modelview, transMat);
-    }
-    else {
-        mat4.translate(modelview, modelview, vec);
-    }  
+    mat4.multiply(modelview, modelview, transMat);
+
     return modelview;
 }
 
-function rotate(modelview, a, axis)
-    {   
-        var xMat = [1, 0, 0, 0, Math.cos(a), Math.sin(a), 0, 0, -Math.sin(a), Math.cos(a), 0, 0, 0, 0, 1];
-        var yMat = [Math.cos(a), 0, -Math.sin(a), 0, 0, 1, 0, 0, Math.sin(a), 0, Math.cos(a), 0, 0, 0, 0, 1];
-        var zMat = [Math.cos(a), Math.sin(a), 0, 0, -Math.sin(a), Math.cos(a), 0, 0, 0, 0, 1, 0, 0, 0, 0, 1];
+function rotate(modelview, a, axis) 
+{   
+    var xMat = [1, 0, 0, 0, Math.cos(a), Math.sin(a), 0, 0, -Math.sin(a), Math.cos(a), 0, 0, 0, 0, 1];
+    var yMat = [Math.cos(a), 0, -Math.sin(a), 0, 0, 1, 0, 0, Math.sin(a), 0, Math.cos(a), 0, 0, 0, 0, 1];
+    var zMat = [Math.cos(a), Math.sin(a), 0, 0, -Math.sin(a), Math.cos(a), 0, 0, 0, 0, 1, 0, 0, 0, 0, 1];
 
-    if (document.getElementById("my_gl").checked) {
         if(axis == "X") mat4.multiply(modelview,modelview,xMat);
         if(axis == "Y") mat4.multiply(modelview,modelview,yMat);
         if(axis == "Z") mat4.multiply(modelview,modelview,zMat);
 
-    }
-    else {
-        if(axis == "X") mat4.rotateX(modelview,modelview,a);
-        if(axis == "Y") mat4.rotateY(modelview,modelview,a);
-        if(axis == "Z") mat4.rotateZ(modelview,modelview,a);
-    }  
     return modelview;
-
 }
 
 
 function scale(modelview, vec)
 {
     var scaleMat = [vec[0], 0, 0, 0, 0, vec[1], 0, 0, 0, 0, vec[2], 0, 0,0,0,1];
-    if (document.getElementById("my_gl").checked) {
-        mat4.multiply(modelview, modelview, scaleMat);
-    }
-    else {
-        mat4.scale(modelview, modelview, vec);
-    }
+    mat4.multiply(modelview, modelview, scaleMat);
+
     return modelview;
 }
 
+
+
 function draw() {
-    gl.clearColor(0.50, 0.85, 0.95,1);
+
+    //cube = 0, ring = 1, sphere = 2, torus, = 3, cyl = 4, cone = 5
+    console.log("in draw");
+    gl.clearColor(.05,.05,.08,1);
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+    rotatedDegrees = (rotatedDegrees + 1) % 360;
 
-    //perspective(projection, Math.PI/10, 1, 10, 20);
-    mat4.perspective(projection,Math.PI/10, 1, 10, 20 );
+    mat4.perspective(projection, Math.PI/8, 1, 10, 20 );
+
+
     modelview = rotator.getViewMatrix();
 
-    // draw the 1st chair , object[0]
-    installModel(objects[0]);
-    currentModelNumber = 0;
-    translate(modelview,[1.2, -0.6, -0.1]);
-    rotate(modelview,degToRad(45),"Y");
-    update_uniform(modelview,projection, 0);
+
+
+    //modelnumber, transvec, scalevec, angle of Rotation, axis of rotation, r, g, b
+
+    //main disc
+    drawModel(4, [0,0,0], [2,2,.18], 0, "N", 35, 153, 84);
+
+    //inner ring for road
+    drawModel(1, [0,0,.1], [.9,.9,.3],0,"N", 44, 62, 80);
+
+    //sun
+    mat4.rotateY(modelview, modelview, degToRad(rotatedDegrees));
+    drawModel(2, [0,0,2.5], [.15,.15,.15], 0,"N", 247, 220, 111);
+
+
+    //center lamp base
+    drawModel(4, [0,0,.09], [.08,.08,.1], 0, "N", 60,60,60);
+    drawModel(4, [0,0,.2], [.02,.02,.5], 0, "N", 170, 183, 184);
+
+    //center lamp
+    drawModel(2, [0,0,.5], [.05,.05,.05], 0,"N", 234, 237, 237);
+    
+    //making trees
+    makeTree([.6,0,.2], [.05,.05,.2], [.6,0,.4], [.15,.15,.3]); //big Tree
+    makeTree([.6,.3,.2], [.06,.06,.2], [.6,.3,.5], [.16,.16,.4]); //medium Tree
+    makeTree([.35,.20,.2], [.02,.02,.2], [.35,.20,.3], [.10,.10,.25]); //small Tree
+
+    //the car
+    makeCar();
+
+}
+
+
+function drawModel(modelNum, transVec, scaleVec, angle, axis, r, g, b){
+    installModel(objects[modelNum]);
+    gl.uniform4f(u_diffuseColor, r/255, g/255, b/255, 1);
+    translate(modelview, transVec);
+    scale(modelview,scaleVec);
+
+    if(axis == "X") mat4.rotateX(modelview,modelview,degToRad(angle));
+    if(axis == "Y") mat4.rotateY(modelview,modelview,degToRad(angle));
+    if(axis == "Z") mat4.rotateZ(modelview,modelview,degToRad(angle));
+
+    update_uniform(modelview, projection, modelNum);
     modelview = rotator.getViewMatrix();
 
-    // draw the 2nd chair , object[0]
-    installModel(objects[0]);
-    currentModelNumber = 0;
-    translate(modelview,[0.3, -0.6, 1.2]);
-    rotate(modelview,degToRad(-45),"Y");
-    update_uniform(modelview,projection, 0);
-    modelview = rotator.getViewMatrix();
+}
+function makeTree(baseTrans, baseScale, topTrans, topScale){
+    drawModel(4, baseTrans, baseScale, 0, "N", 123, 36, 28);
+    drawModel(5, topTrans, topScale, 0, "N", 22, 160, 133);
+}
 
-    // draw the 3rd chair , object[0]
-    installModel(objects[0]);
-    currentModelNumber = 0;
-    translate(modelview,[-1,-0.6, 0.4])
-    rotate(modelview, 180, "Y");
-    update_uniform(modelview,projection, 0);
-    modelview = rotator.getViewMatrix();
+function makeCar(){
+    
+    mat4.rotateZ(modelview, modelview, degToRad(rotatedDegrees));
+    drawModel(0, [0,1.2,.3], [.7,.4,.2],0, 230, 126, 34);
+    mat4.rotateZ(modelview, modelview, degToRad(rotatedDegrees));
+    drawModel(0, [0,1.2,.4], [.4,.3,.2],0, 211, 84, 0);
+    mat4.rotateZ(modelview, modelview, degToRad(rotatedDegrees));
+    drawModel(3, [-.2,.95, .25], [.07,.07,.07], 90, "X", 10,10,10);
+    mat4.rotateZ(modelview, modelview, degToRad(rotatedDegrees));
+    drawModel(3, [.2,.95, .25], [.07,.07,.07], 90, "X", 10,10,10);
+    mat4.rotateZ(modelview, modelview, degToRad(rotatedDegrees));
+    drawModel(3, [-.2,1.45, .25], [.07,.07,.07], 90, "X", 10,10,10);
+    mat4.rotateZ(modelview, modelview, degToRad(rotatedDegrees));
+    drawModel(3, [.2,1.45, .25], [.07,.07,.07], 90, "X", 10,10,10);
+    mat4.rotateZ(modelview, modelview, degToRad(rotatedDegrees));
+    drawModel(4, [-.25,1.39,.5], [.005,.005,.5], 0, "N", 170, 183, 184);
+    mat4.rotateZ(modelview, modelview, degToRad(rotatedDegrees));
 
-    // draw the 4th chair , object[0]
-    installModel(objects[0]);
-    currentModelNumber = 0;
-    translate(modelview,[-.2,-0.6, -1])
-    rotate(modelview, 279, "Y");
-    update_uniform(modelview,projection, 0);
-    modelview = rotator.getViewMatrix();
+    
 
-    // draw the Table , object[1]
-    installModel(objects[1]);
-    currentModelNumber = 1;
-    update_uniform(modelview,projection, 1);
-    modelview = rotator.getViewMatrix();
-
-    // draw the Cube , object[2]
-    installModel(objects[3]);
-    currentModelNumber = 3;
-    scale(modelview,[.3,.3,.3]);
-    translate(modelview, [-.2, .4,-.3]);
-    update_uniform(modelview,projection, 3);
-
-   
 }
 
 /*
@@ -166,11 +195,9 @@ function draw() {
   transform
 */
 function update_uniform(modelview,projection,currentModelNumber){
-
     /* Get the matrix for transforming normal vectors from the modelview matrix,
        and send matrices to the shader program*/
     mat3.normalFromMat4(normalMatrix, modelview);
-   
     gl.uniformMatrix3fv(u_normalMatrix, false, normalMatrix);
     gl.uniformMatrix4fv(u_modelview, false, modelview );
     gl.uniformMatrix4fv(u_projection, false, projection );  
@@ -278,31 +305,20 @@ function createProgram(gl, vertexShaderID, fragmentShaderID) {
  * initialization function that will be called when the page has loaded
  */
 function init() {
-    try {
-        var canvas = document.getElementById("myGLCanvas");
-        gl = canvas.getContext("webgl") ||
-                         canvas.getContext("experimental-webgl");
-        if ( ! gl ) {
-            throw "Browser does not support WebGL";
-        }
-    }
-    catch (e) {
-        document.getElementById("canvas-holder").innerHTML =
-            "<p>Sorry, could not get a WebGL graphics context.</p>";
-        return;
-    }
+    var canvas = document.getElementById("myGLCanvas");
+    gl = canvas.getContext("webgl");
+    initGL();
 
-    try {
-        initGL();  // initialize the WebGL graphics context
-    }
-    catch (e) {
-        document.getElementById("canvas-holder").innerHTML =
-            "<p>Sorry, could not initialize the WebGL graphics context:" + e + "</p>";
-        return;
-    }
+    gl.clearColor(0.0, 0.0, 0.0, 1.0);
+    gl.enable(gl.DEPTH_TEST);
+    console.log("get on girl");
 
-    document.getElementById("my_gl").checked = true;
-    document.getElementById("my_gl").onchange = draw;
     rotator = new TrackballRotator(canvas, draw, 15);
+    tick();
+}
+
+function tick() {
+    requestAnimFrame(tick);
     draw();
+
 }
