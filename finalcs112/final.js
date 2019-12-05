@@ -46,6 +46,7 @@ var objects = [         // Objects for display
    uvTorus(2,1),
    uvCylinder(1,1),
    uvCone(1,1),
+   ring(1,.99),
 ];
 
 
@@ -105,7 +106,7 @@ function scale(modelview, vec)
 
 function draw() {
 
-    //cube = 0, ring = 1, sphere = 2, torus, = 3, cyl = 4, cone = 5
+    //cube = 0, ring = 1, sphere = 2, torus, = 3, cyl = 4, cone = 5, mini ring = 6
     console.log("in draw");
     gl.clearColor(.05,.05,.08,1);
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
@@ -121,10 +122,12 @@ function draw() {
     //modelnumber, transvec, scalevec, angle of Rotation, axis of rotation, r, g, b
 
     //main disc
-    drawModel(4, [0,0,0], [2,2,.18], 0, "N", 35, 153, 84);
+    drawModel(4, [0,0,0], [2.5,2.5,.18], 0, "N", 35, 153, 84);
 
     //inner ring for road
-    drawModel(1, [0,0,.1], [.9,.9,.3],0,"N", 44, 62, 80);
+    drawModel(1, [0,0,.1], [1,1,.3],0,"N", 44, 62, 80);
+
+    drawModel(6, [0,0,.15], [1.5,1.5,.3],0,"N", 200, 202, 0);
 
     //sun
     mat4.rotateY(modelview, modelview, degToRad(rotatedDegrees));
@@ -171,19 +174,19 @@ function makeTree(baseTrans, baseScale, topTrans, topScale){
 function makeCar(){
     
     mat4.rotateZ(modelview, modelview, degToRad(rotatedDegrees));
-    drawModel(0, [0,1.2,.3], [.7,.4,.2],0, 230, 126, 34);
+    drawModel(0, [0,1.7,.3], [.7,.4,.2],0, 230, 126, 34);
     mat4.rotateZ(modelview, modelview, degToRad(rotatedDegrees));
-    drawModel(0, [0,1.2,.4], [.4,.3,.2],0, 211, 84, 0);
+    drawModel(0, [0,1.7,.4], [.4,.3,.2],0, 211, 84, 0);
     mat4.rotateZ(modelview, modelview, degToRad(rotatedDegrees));
-    drawModel(3, [-.2,.95, .25], [.07,.07,.07], 90, "X", 10,10,10);
+    drawModel(3, [-.2,1.95, .25], [.07,.07,.07], 90, "X", 10,10,10);
     mat4.rotateZ(modelview, modelview, degToRad(rotatedDegrees));
-    drawModel(3, [.2,.95, .25], [.07,.07,.07], 90, "X", 10,10,10);
+    drawModel(3, [.2,1.95, .25], [.07,.07,.07], 90, "X", 10,10,10);
     mat4.rotateZ(modelview, modelview, degToRad(rotatedDegrees));
     drawModel(3, [-.2,1.45, .25], [.07,.07,.07], 90, "X", 10,10,10);
     mat4.rotateZ(modelview, modelview, degToRad(rotatedDegrees));
     drawModel(3, [.2,1.45, .25], [.07,.07,.07], 90, "X", 10,10,10);
     mat4.rotateZ(modelview, modelview, degToRad(rotatedDegrees));
-    drawModel(4, [-.25,1.39,.5], [.005,.005,.5], 0, "N", 170, 183, 184);
+    drawModel(4, [-.25,1.85,.5], [.005,.005,.5], 0, "N", 170, 183, 184);
     mat4.rotateZ(modelview, modelview, degToRad(rotatedDegrees));
 
     
