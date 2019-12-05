@@ -46,7 +46,7 @@ var objects = [         // Objects for display
    uvTorus(2,1),
    uvCylinder(1,1),
    uvCone(1,1),
-   ring(1,.99),
+   ring(1,.99), 
 ];
 
 
@@ -126,8 +126,8 @@ function draw() {
 
     //inner ring for road
     drawModel(1, [0,0,.1], [1,1,.3],0,"N", 44, 62, 80);
-
     drawModel(6, [0,0,.15], [1.5,1.5,.3],0,"N", 200, 202, 0);
+    drawModel(6, [0,0,.15], [1.47,1.47,.3],0,"N", 200, 202, 0);
 
     //sun
     mat4.rotateY(modelview, modelview, degToRad(rotatedDegrees));
@@ -142,15 +142,22 @@ function draw() {
     drawModel(2, [0,0,.5], [.05,.05,.05], 0,"N", 234, 237, 237);
     
     //making trees
-    makeTree([.6,0,.2], [.05,.05,.2], [.6,0,.4], [.15,.15,.3]); //big Tree
-    makeTree([.6,.3,.2], [.06,.06,.2], [.6,.3,.5], [.16,.16,.4]); //medium Tree
-    makeTree([.35,.20,.2], [.02,.02,.2], [.35,.20,.3], [.10,.10,.25]); //small Tree
+    placeTrees();
+
 
     //the car
-    makeCar();
+    drawCar();
 
 }
 
+function placeTrees() {
+    drawTree([.6,0,.2], [.05,.05,.2], [.6,0,.4], [.15,.15,.3]); //big Tree
+    drawTree([.6,.3,.2], [.06,.06,.2], [.6,.3,.5], [.16,.16,.4]); //medium Tree
+    drawTree([.35,.20,.2], [.02,.02,.2], [.35,.20,.3], [.10,.10,.25]); //small Tree
+
+    drawTree([-.6,0,.2], [.05,.05,.2], [-.6,0,.4], [.15,.15,.3]); //big Tree
+    drawTree([-.7,.20,.2], [.02,.02,.2], [-.7,.20,.3], [.10,.10,.25]); //small Tree
+}
 
 function drawModel(modelNum, transVec, scaleVec, angle, axis, r, g, b){
     installModel(objects[modelNum]);
@@ -166,12 +173,12 @@ function drawModel(modelNum, transVec, scaleVec, angle, axis, r, g, b){
     modelview = rotator.getViewMatrix();
 
 }
-function makeTree(baseTrans, baseScale, topTrans, topScale){
+function drawTree(baseTrans, baseScale, topTrans, topScale){
     drawModel(4, baseTrans, baseScale, 0, "N", 123, 36, 28);
     drawModel(5, topTrans, topScale, 0, "N", 22, 160, 133);
 }
 
-function makeCar(){
+function drawCar(){
     
     mat4.rotateZ(modelview, modelview, degToRad(rotatedDegrees));
     drawModel(0, [0,1.7,.3], [.7,.4,.2],0, 230, 126, 34);
@@ -188,9 +195,9 @@ function makeCar(){
     mat4.rotateZ(modelview, modelview, degToRad(rotatedDegrees));
     drawModel(4, [-.25,1.85,.5], [.005,.005,.5], 0, "N", 170, 183, 184);
     mat4.rotateZ(modelview, modelview, degToRad(rotatedDegrees));
-
-    
-
+    drawModel(2, [-.35, 1.8, .3], [.05, .05, .05], 0, "N", 255,255,153 );
+    mat4.rotateZ(modelview, modelview, degToRad(rotatedDegrees));
+    drawModel(2, [-.35, 1.6, .3], [.05, .05, .05], 0, "N", 255,255,153 );
 }
 
 /*
@@ -247,7 +254,7 @@ function initGL() {
     gl.uniform3f(u_specularColor, 0.5, 0.5, 0.5);
     gl.uniform4f(u_diffuseColor, .2,.2,.2, 1);
     gl.uniform1f(u_specularExponent, 10);
-    gl.uniform4f(u_lightPosition, 0, 0, 0, 1);
+    gl.uniform4f(u_lightPosition, 0, 0, .5, 1); //this thing
 }
 
 /* Creates a program for use in the WebGL context gl, and returns the
