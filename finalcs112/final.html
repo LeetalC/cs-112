@@ -15,55 +15,91 @@
 
 <!-- vertex shader -->
 <script type="x-shader/x-vertex" id="vshader-source">
-    attribute vec3 a_coords;
+  
+
+    attribute vec3 a_coords;    //object coordinates
     attribute vec3 a_normal;
 
     uniform mat4 modelview;
     uniform mat4 projection;
-
-    uniform vec3 u_worldLightPos; // testing for light
-
     uniform mat3 normalMatrix;
+
+
     uniform vec4 lightPosition;
+    uniform vec4 pointLightPosition;
+
     uniform vec4 diffuseColor;
     uniform vec3 specularColor;
+
     uniform float specularExponent;
-    varying vec4 v_color;
+
+    varying vec4 v_color;   //this is sent to frag shader
+    varying vec3 color; //basic diffuse color ir, ig, ib
+    varying vec3 N,L,R, V;   // vectors for lighting equation
+
     void main() {
+
         vec4 coords = vec4(a_coords,1.0);
         vec4 eyeCoords = modelview* coords;
         gl_Position = projection * eyeCoords;
+        
+        N = normalize( normalMatrix*a_normal ); 
+        L = normalize( pointLightPosition.xyz / pointLightPosition.w - eyeCoords.xyz );
 
-        vec3 N, L, R, V;  // vectors for lighting equation
-        N = normalize( normalMatrix*a_normal );
-        if ( lightPosition.w == 0.0 ) {
-            L = normalize( lightPosition.xyz );
-        }
-        else {
-            L = normalize( lightPosition.xyz/lightPosition.w - eyeCoords.xyz );
-        }
         R = -reflect(L,N);
-        V = normalize( -eyeCoords.xyz);     // (Assumes a perspective projection.)
-        if ( dot(L,N) <= 0.0 ) {
-            v_color = vec4(0,0,0,1);
-        }
-        else {
-            vec3 color = 0.8*dot(L,N) * diffuseColor.rgb;  // 0.8 is diffuse intensity of light
-            if (dot(R,V) > 0.0) {
-                color += 0.4*pow(dot(R,V),specularExponent) * specularColor; // 0.4 is specular intensity of light
-            }
-            v_color = vec4(color, diffuseColor.a);
-        }
+        V = normalize( -eyeCoords.xyz);
+
+        v_color = vec4(color, diffuseColor.a);  //v_color is sent to frag shader
+
+       //subtract two points and you have a vector
+       //uniform light point
+       //varying angle
+       //angle = dot(light, View?)
+       //pass in from js light point and lightdir
+
+       //using vertex shader to instal light source
     }
 </script>
 
 <!-- fragment shader -->
 <script type="x-shader/x-fragment" id="fshader-source">
-    precision mediump float;
+     #ifdef GL_FRAGMENT_PRECISION_HIGH
+       precision highp float;
+    #else
+       precision mediump float;
+    #endif
+
+    uniform int ambient;    //used to set the mode
+    uniform int diffuse;
+    uniform int specular;
+
+    varying vec3 N,L,R,V;
+    varying vec3 color;
     varying vec4 v_color;
+
+    uniform vec4 diffuseColor;
+    uniform vec3 specularColor;
+    uniform float specularExponent;
+
+    
+    float K_a = 0.1;    //constants
+    float K_d = 0.8;
+    float K_s = 0.4;
+
     void main() {
-        gl_FragColor = v_color;
+    
+    gl_FragColor = v_color;
+
+            gl_FragColor += vec4(K_a * diffuseColor.rgb, diffuseColor.a);
+            gl_FragColor += vec4(K_d * diffuseColor.rgb * max(dot(N,L), 0.0), diffuseColor.a);
+          //  gl_FragColor += vec4(K_s * specularColor * pow(max(dot(R,V), 0.0), specularExponent) * diffuseColor.a, diffuseColor.a);
+
+
     }
+
+    //in frag: if angle < 30
+
+
 </script>
 
 

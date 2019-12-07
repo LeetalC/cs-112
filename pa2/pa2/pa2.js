@@ -50,8 +50,10 @@ function draw() {
 
     gl.clearColor(.15,0.15,0.3,1);
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+    mat4.rotateZ(projection,degToRad(45));
    
     mat4.perspective(projection,Math.PI/5,1,10,20);
+        mat4.rotateZ(projection,degToRad(45));
    
     modelview = rotator.getViewMatrix();
    

@@ -11,7 +11,14 @@ var index_buffer;       // Buffer to hold vetex indices from model.
 var u_diffuseColor;     // Locations of uniform variables in the shader program
 var u_specularColor;
 var u_specularExponent;
-var u_lightPosition;
+    
+
+//car light positions
+var u_lightPosition;    
+var u_pointLightPosition;
+var u_carHeadLight1Pos;
+var u_carHeadLight2Pos;
+
 var u_modelview;
 var u_projection;
 var u_normalMatrix;    
@@ -24,6 +31,7 @@ var rotator;                             // A TrackballRotator to implement rota
 
 //animation
 var rotatedDegrees = 0;
+
 var inc = 1;
 var then = 0;
 var modelXRotationRadians = degToRad(0);
@@ -37,6 +45,7 @@ var colors = [  // RGB color arrays for diffuse and specular color values
 
 var lightPositions = [  // values for light position
   [0,0,0,1],
+
 ];
 
 var objects = [         // Objects for display
@@ -79,6 +88,7 @@ function translate(modelview, vec)//TODO: function inputs
 
     return modelview;
 }
+/*keep a vector and rotate it around*/
 
 function rotate(modelview, a, axis) 
 {   
@@ -112,7 +122,7 @@ function draw() {
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
     rotatedDegrees = (rotatedDegrees + 1) % 360;
 
-    mat4.perspective(projection, Math.PI/8, 1, 10, 20 );
+    mat4.perspective(projection, Math.PI/7, 1, 10, 20 );
 
 
     modelview = rotator.getViewMatrix();
@@ -131,7 +141,7 @@ function draw() {
 
     //sun
     mat4.rotateY(modelview, modelview, degToRad(rotatedDegrees));
-    drawModel(2, [0,0,2.5], [.15,.15,.15], 0,"N", 247, 220, 111);
+    drawModel(2, [0,0,2.7], [.15,.15,.15], 0,"N", 247, 220, 111);
 
 
     //center lamp base
@@ -157,6 +167,11 @@ function placeTrees() {
 
     drawTree([-.6,0,.2], [.05,.05,.2], [-.6,0,.4], [.15,.15,.3]); //big Tree
     drawTree([-.7,.20,.2], [.02,.02,.2], [-.7,.20,.3], [.10,.10,.25]); //small Tree
+    drawTree([-2.2,0,.2], [.05,.05,.2], [-2.2,0,.4], [.15,.15,.3]); //big Tree
+    drawTree([-2.2,.2,.2], [.06,.06,.2], [-2.2,.2,.5], [.16,.16,.4]); //medium Tree
+    drawTree([0,2.2,.2], [.06,.06,.2], [0,2.2,.5], [.16,.16,.4]); //medium Tree
+    drawTree([.8,-2.2,.2], [.02,.02,.2], [.8,-2.2,.3], [.10,.10,.25]); //small Tree
+    drawTree([.65,-2.2,.2], [.02,.02,.2], [.65,-2.2,.3], [.10,.10,.25]); //small Tree
 }
 
 function drawModel(modelNum, transVec, scaleVec, angle, axis, r, g, b){
@@ -173,13 +188,14 @@ function drawModel(modelNum, transVec, scaleVec, angle, axis, r, g, b){
     modelview = rotator.getViewMatrix();
 
 }
+
 function drawTree(baseTrans, baseScale, topTrans, topScale){
     drawModel(4, baseTrans, baseScale, 0, "N", 123, 36, 28);
     drawModel(5, topTrans, topScale, 0, "N", 22, 160, 133);
 }
 
 function drawCar(){
-    
+    //yes i know this is horirble but it works.
     mat4.rotateZ(modelview, modelview, degToRad(rotatedDegrees));
     drawModel(0, [0,1.7,.3], [.7,.4,.2],0, 230, 126, 34);
     mat4.rotateZ(modelview, modelview, degToRad(rotatedDegrees));
@@ -195,9 +211,34 @@ function drawCar(){
     mat4.rotateZ(modelview, modelview, degToRad(rotatedDegrees));
     drawModel(4, [-.25,1.85,.5], [.005,.005,.5], 0, "N", 170, 183, 184);
     mat4.rotateZ(modelview, modelview, degToRad(rotatedDegrees));
-    drawModel(2, [-.35, 1.8, .3], [.05, .05, .05], 0, "N", 255,255,153 );
+    drawModel(2, [-.35, 1.8, .3], [.05, .05, .05], 0, "N", 255,255,153);
     mat4.rotateZ(modelview, modelview, degToRad(rotatedDegrees));
-    drawModel(2, [-.35, 1.6, .3], [.05, .05, .05], 0, "N", 255,255,153 );
+    drawModel(2, [-.35, 1.6, .3], [.05, .05, .05], 0, "N", 255,255,153);
+    mat4.rotateZ(modelview, modelview, degToRad(rotatedDegrees));
+    drawModel(4, [-.2, 1.7, .25], [.03, .6, .03], 90, "X", 200,200,200);
+    mat4.rotateZ(modelview, modelview, degToRad(rotatedDegrees));
+    drawModel(4, [.2, 1.7, .25], [.03, .6, .03], 90, "X", 200,200,200);
+
+    mat4.rotateZ(modelview, modelview, degToRad(rotatedDegrees));
+    drawModel(4, [-.2,1.45,.25], [.15,.03,.03], 90, "Y", 200,200,200);
+
+    mat4.rotateZ(modelview, modelview, degToRad(rotatedDegrees));
+
+  //  mat4.rotateY(modelview,modelview, degToRad(rotatedDegrees));
+    drawModel(4, [.2,1.45,.25], [.15,.03,.03], 90, "Y", 200,200,200);
+
+    mat4.rotateZ(modelview, modelview, degToRad(rotatedDegrees));
+    drawModel(4, [-.2,1.97,.25], [.15,.03,.03], 90, "Y", 200,200,200);
+
+    mat4.rotateZ(modelview, modelview, degToRad(rotatedDegrees));
+    drawModel(4, [.2,1.97,.25], [.15,.03,.03], 90, "Y", 200,200,200);
+
+    //array of lights
+    //point light is at a point and goes around it
+    //directional light goes in a direction. you provide the normalized vector of where the light should fall
+    //for a point light, you provide a position of the light
+    //distance from the light position
+
 }
 
 /*
@@ -214,6 +255,7 @@ function update_uniform(modelview,projection,currentModelNumber){
     gl.drawElements(gl.TRIANGLES, objects[currentModelNumber].indices.length, gl.UNSIGNED_SHORT, 0);
 }
 
+//for the point light you can use the angle to determine where to cut off light
 
 
 /*
@@ -243,18 +285,25 @@ function initGL() {
     u_modelview = gl.getUniformLocation(prog, "modelview");
     u_projection = gl.getUniformLocation(prog, "projection");
     u_normalMatrix =  gl.getUniformLocation(prog, "normalMatrix");
+
     u_lightPosition=  gl.getUniformLocation(prog, "lightPosition");
+    u_pointLightPosition = gl.getUniformLocation(prog, "pointLightPosition")
+
+
     u_diffuseColor =  gl.getUniformLocation(prog, "diffuseColor");
     u_specularColor =  gl.getUniformLocation(prog, "specularColor");
     u_specularExponent = gl.getUniformLocation(prog, "specularExponent");
     a_coords_buffer = gl.createBuffer();
     a_normal_buffer = gl.createBuffer();
     index_buffer = gl.createBuffer();
+
     gl.enable(gl.DEPTH_TEST);
     gl.uniform3f(u_specularColor, 0.5, 0.5, 0.5);
     gl.uniform4f(u_diffuseColor, .2,.2,.2, 1);
     gl.uniform1f(u_specularExponent, 10);
-    gl.uniform4f(u_lightPosition, 0, 0, .5, 1); //this thing
+
+    gl.uniform4f(u_lightPosition, 0, 0, 0, 1); 
+    gl.uniform4f(u_pointLightPosition, 1,0,0,1);
 }
 
 /* Creates a program for use in the WebGL context gl, and returns the
